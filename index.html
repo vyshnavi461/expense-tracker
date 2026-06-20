@@ -1,7 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Expense Tracker</title>
+
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2563eb">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#111827;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.phone{
+    width:380px;
+    background:white;
+    border-radius:30px;
+    overflow:hidden;
+    box-shadow:0 0 25px rgba(0,0,0,0.4);
+}
+
+.header{
+    background:#2563eb;
+    color:white;
+    text-align:center;
+    padding:25px;
+}
+
+.header h1{
+    font-size:28px;
+}
+
+.balance{
+    text-align:center;
+    padding:20px;
+}
+
+.balance h2{
+    color:#16a34a;
+    font-size:32px;
+}
+
+.form{
+    padding:20px;
+}
+
+.form input,
+.form select{
+    width:100%;
+    padding:12px;
+    margin-bottom:10px;
+    border:1px solid #ddd;
+    border-radius:10px;
+}
+
+.form button{
+    width:100%;
+    padding:12px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.form button:hover{
+    background:#1d4ed8;
+}
+
+.expense-list{
+    padding:15px;
+    max-height:300px;
+    overflow-y:auto;
+}
+
+.expense{
+    background:#f1f5f9;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.details{
+    display:flex;
+    flex-direction:column;
+}
+
+.amount{
+    color:red;
+    font-weight:bold;
+}
+
+.delete{
+    background:red;
+    color:white;
+    border:none;
+    padding:6px 10px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.footer{
+    background:#f8fafc;
+    padding:15px;
+    text-align:center;
+    font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="phone">
+
+    <div class="header">
+        <h1>Expense Tracker</h1>
+    </div>
+
+    <div class="balance">
+        <p>Total Expenses</p>
+        <h2>₹ <span id="total">0</span></h2>
+    </div>
+
+    <div class="form">
+
+        <input type="text"
+               id="name"
+               placeholder="Expense Name">
+
+        <input type="number"
+               id="amount"
+               placeholder="Amount">
+
+        <select id="category">
+            <option>Food</option>
+            <option>Travel</option>
+            <option>Shopping</option>
+            <option>Bills</option>
+            <option>Other</option>
+        </select>
+
+        <button onclick="addExpense()">
+            Add Expense
+        </button>
+
+    </div>
+
+    <div class="expense-list"
+         id="expenseList">
+    </div>
+
+    <div class="footer">
+        Expense Tracker PWA
+    </div>
+
+</div>
+
 <script>
+
+let total = 0;
+
+function addExpense(){
+
+    let name =
+    document.getElementById("name").value;
+
+    let amount =
+    parseFloat(
+    document.getElementById("amount").value);
+
+    let category =
+    document.getElementById("category").value;
+
+    if(name === "" || isNaN(amount) || amount <= 0){
+
+        alert("Enter valid details");
+        return;
+    }
+
+    total += amount;
+
+    document.getElementById("total")
+    .innerText = total;
+
+    let expense =
+    document.createElement("div");
+
+    expense.classList.add("expense");
+
+    expense.innerHTML = `
+    <div class="details">
+        <strong>${name}</strong>
+        <small>${category}</small>
+    </div>
+
+    <div>
+        <span class="amount">
+        ₹${amount}
+        </span>
+
+        <button class="delete"
+        onclick="deleteExpense(this,${amount})">
+        X
+        </button>
+    </div>
+    `;
+
+    document.getElementById("expenseList")
+    .appendChild(expense);
+
+    document.getElementById("name").value="";
+    document.getElementById("amount").value="";
+}
+
+function deleteExpense(btn, amount){
+
+    total -= amount;
+
+    document.getElementById("total")
+    .innerText = total;
+
+    btn.parentElement.parentElement.remove();
+}
+
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js");
 }
+
 </script>
+
+</body>
+</html>
